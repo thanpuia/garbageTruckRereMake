@@ -1,5 +1,7 @@
 package com.example.lalthanpuiachhangte.garbagetruckreremake;
 
+import android.content.Context;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textView;
     TextView latTV,longTV;
+    LocationManager locationManager;
 
     String TAG = "TAG";
     @Override
@@ -38,9 +41,11 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference longRef = database.getReference("longitude");
 
         myRef.setValue("Hello, World!");
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 
-        myRef.addValueEventListener(new ValueEventListener() {
+
+      /*  myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
 
 
