@@ -7,13 +7,46 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update Frequency:"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Spinner
+            android:id="@+id/secondSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:id="@+id/minuteSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_margin="20dp"
+        android:id="@+id/liveButton"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:text="null"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:onClick="liveButtonClick"
+        />
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="null"
-        android:textSize="88dp"/>
+        android:textSize="30dp"/>
 
     <TextView
         android:id="@+id/latitudeTextView"
@@ -30,4 +63,10 @@
         android:text="Longitude: "
         android:textSize="30dp"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:onClick="BackClick"
+        android:text="Back"/>
 </LinearLayout>
