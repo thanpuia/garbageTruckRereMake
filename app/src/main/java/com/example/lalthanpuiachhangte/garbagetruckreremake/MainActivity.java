@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public Spinner minuteSpinner, secondSpinner;
 
     Button liveButton;
-    Boolean liveButtonStatus = false;
+    Boolean liveButtonStatus = true;
 
     public static int minTime;
     public int second_user,minute_user;
@@ -104,17 +104,17 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) { }});
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("truck-1/message");
+       /* DatabaseReference myRef = database.getReference("truck-1/message");
 
         latRef = database.getReference("truck-1/latitude");
         longRef = database.getReference("truck-1/longitude");
 
-        myRef.setValue("Fighting!");
+        myRef.setValue("Fighting!");*/
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 
         //THIS IS NOT VERY IMPORTANT
-        myRef.addValueEventListener(new ValueEventListener() {
+      /*  myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -129,10 +129,10 @@ public class MainActivity extends AppCompatActivity {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
-        });
+        });*/
 
 
-        //THIS LISTEN TO THE VALUE CHANGE FROM THE DATABASE WHICH IS BEING UPDATED BY THE TRUCK DRIVER
+     /*   //THIS LISTEN TO THE VALUE CHANGE FROM THE DATABASE WHICH IS BEING UPDATED BY THE TRUCK DRIVER
         latRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -159,6 +159,52 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+*/
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+//                latRef.setValue(location.getLatitude());
+//                longRef.setValue(location.getLongitude());
+
+                //PUSHING THE NEW LOCATION INTO FIREBASE WITH UNIQUE ID
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                String newKey = databaseReference.child("trucks/truck-1").push().getKey();
+
+                databaseReference.child("trucks/truck-1/" + newKey).child("latitude").setValue(location.getLatitude());
+                databaseReference.child("trucks/truck-1/" + newKey).child("longitude").setValue(location.getLongitude());
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, 5, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 5, locationListener);
 
     }
 

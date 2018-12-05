@@ -18,6 +18,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -36,12 +37,17 @@ import android.util.Log;
 
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -96,15 +102,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         longTV = findViewById(R.id.longitudeTextView);
 
         //CREATING FIREBASE REFERENCE
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-       // DatabaseReference myRef = database.getReference("truck-1/message");
+        //database = FirebaseDatabase.getInstance();
+        myRef = FirebaseDatabase.getInstance().getReference();
+        final Query query = myRef.child("trucks/truck-1/").orderByKey().limitToLast(1);
+       // query.
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            //    String lat = dataSnapshot.child("latitude").getValue().toString();
+//                Log.i("TAGGGG","LATTT"+lat);
+                Log.i("TAGGGG","LATTT "+dataSnapshot);
+               // Log.i("TAGGGG","key  "+myRef.getKey());
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         //CREATING UNIQUE REFERENCE FOR LAT AND LONG
         // latRef = database.getReference("truck-1/latitude");
         // longRef = database.getReference("truck-1/longitude");
 
        // CREATE LISTENER FOR LATITUDE
-        latRef.addValueEventListener(new ValueEventListener() {
+        /*latRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 latValue = dataSnapshot.getValue(double.class);
@@ -139,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
 
 
