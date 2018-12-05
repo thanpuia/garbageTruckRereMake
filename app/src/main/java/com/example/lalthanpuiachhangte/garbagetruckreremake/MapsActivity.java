@@ -49,7 +49,7 @@ import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    public GoogleMap mMap;
+    public GoogleMap mMap, lastKnowLocationOnGoogleMap;
     TextView textView;
     TextView latTV, longTV;
     public DatabaseReference latRef, longRef;
@@ -64,6 +64,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public boolean countMarker = true;
 
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +79,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -86,151 +92,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-       // Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        //locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-    /*    final double longitude = location.getLongitude();
-        double latitude = location.getLatitude();//*/
         latTV = findViewById(R.id.latitudeTextView);
         longTV = findViewById(R.id.longitudeTextView);
-//
-//        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//
-//        //THIS IS PERMISSION CHECK FOR LAST KNOWN LOCATION. NO NEED TO WORRY . AUTO GENERATE
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//
-//        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        double longitude = location.getLongitude();
-//        double latitude = location.getLatitude();
-//
-//        //CREATING FIREBASE REFERENCE
+
+        //CREATING FIREBASE REFERENCE
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-//
-//        //CREATING UNIQUE REFERENCE FOR LAT AND LONG
-         latRef = database.getReference("latitude");
-         longRef = database.getReference("longitude");
-//
-//
-//        //SET VALUE FOR LATITUTDE AND LONGITUDE
-//        latRef.setValue(latitude);
-//        longRef.setValue(longitude);
-//
-//        //SET VALUE FOR MESSAGE
-//        myRef.setValue("Hello, World!");
-//
-//        //CREATE LISTENER FOR MESSAGE
-//        myRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // This method is called once with the initial value and again
-//                // whenever data at this location is updated.
-//                String value = dataSnapshot.getValue(String.class);
-//                //        Log.d(TAG, "Value is: " + value);
-//                //textView.setText(value);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                // Failed to read value
-//                Log.w(TAG, "Failed to read value.", error.toException());
-//            }
-//        });
-//
-//        //CREATE LISTENER FOR LATITUDE
-//        latRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                latValue = dataSnapshot.getValue(int.class);
-//                latTV.setText("Latitude: "+latValue);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//
-//        //CREATE LISTENER FOR LONGITUDE
-//        longRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                longValue = dataSnapshot.getValue(int.class);
-//                longTV.setText("Longitude: "+longValue);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//
-//
-//        //UPDATING THE MARKER POSITION
-//
-//
-//        LocationListener locationListener = new LocationListener() {
-//            @Override
-//            public void onLocationChanged(Location location) {
-//                //marker.remove();
-//
-//                /*LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-//                mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//*/
-//                List<String> providerList = locationManager.getAllProviders();
-//                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-//                String lol="";
-//                try {
-//                    List<Address> listAddresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-//                    if(null!=listAddresses&&listAddresses.size()>0){
-//                         lol = listAddresses.get(0).getAddressLine(0);
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-//                mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//                if(!lol.equals("")) latTV.setText("Latitude: "+lol);
-//
-//
-//            }
-//
-//            @Override
-//            public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderEnabled(String provider) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderDisabled(String provider) {
-//
-//            }
-//        };
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 800, 1, locationListener);
+       // DatabaseReference myRef = database.getReference("truck-1/message");
+
+        //CREATING UNIQUE REFERENCE FOR LAT AND LONG
+        // latRef = database.getReference("truck-1/latitude");
+        // longRef = database.getReference("truck-1/longitude");
 
        // CREATE LISTENER FOR LATITUDE
         latRef.addValueEventListener(new ValueEventListener() {
@@ -243,7 +114,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(newLong != 0) {
                     setMap();
                 }
-
             }
 
             @Override
@@ -263,7 +133,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(newLat != 0) {
                     setMap();
                 }
-
             }
 
             @Override
@@ -273,10 +142,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-    }
-    public MarkerOptions a;
-    public Marker m;
 
+    }
+
+    public MarkerOptions a;
+    public Marker m1,m2;
 
     public void setMap() {
 
@@ -287,28 +157,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng (newLat, newLong);
        // LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
          a = new MarkerOptions().position(new LatLng(newLat, newLong));
-         m = mMap.addMarker(a);
+         m1 = mMap.addMarker(a);
 
        // countMarker = false;
 
         //mMap.addMarker(new MarkerOptions().position(sydney));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-       // m.remove();
-        //m.isDraggable();
+
+    //ZOOM THE CAMERA VIEW   22: we can see only one street
+                    //      18: we can see around 3 streets
+        //                  16: this is very clear but the visible area is too less
+        //                  15.5: we can see one locality and its neighbour  THIS IS GOOD FOR NOW!!
+        //                  12 : we can see whole aizawl city and its surroundings
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom
+                (new LatLng(newLat, newLong), 7.0f));
+
         mMap.clear();
 
-       // m.setPosition(sydney);
         mMap.addMarker(new MarkerOptions().position(sydney));
-       // m.setPosition(sydney);
 
+        //GET LAST KNOWN LOCATION AND UPDATE THE FIREBASE
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
 
-//        MarkerOptions a = new MarkerOptions().position(new LatLng(newLat, newLong));
-//        Marker m = mMap.addMarker(a);
-//        m.setPosition(new LatLng(newLat, newLong));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//        m.remove();
+        Location location2 = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+
+        // Add a marker in Sydney and move the camera
+        LatLng lastKnowLocation = new LatLng(location2.getLatitude(), location2.getLongitude());
+        lastKnowLocationOnGoogleMap.addMarker(new MarkerOptions().position(lastKnowLocation).title("You Are Here"));
+
     }
-
 
     /**
      * Manipulates the map once available.
@@ -322,18 +211,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-       mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-
+        lastKnowLocationOnGoogleMap = googleMap;
+           //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
     }
 
     public void GoToDrivePageClick(View view) {
         Intent intent = new Intent (this, MainActivity.class);
         startActivity(intent);
+    }
+
+    public void lastKnownLocationClick(View view) {
+
+        setMap();
+
     }
 }
