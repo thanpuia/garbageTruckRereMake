@@ -58,13 +58,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public GoogleMap mMap, lastKnowLocationOnGoogleMap;
     TextView textView;
     TextView latTV, longTV;
-    public DatabaseReference latRef, longRef;
-    public double newLat = 0;
-    public double newLong = 0;
+
+//    public long truckLat = 0;
+//    public long truckLng = 0;
+
     public long truckLat = 0;
     public long truckLng = 0;
 
-    public double latValue, longValue;
+    public MarkerOptions a;
+    public Marker m1,m2;
 
     String TAG = "TAG";
 
@@ -87,6 +89,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
+        //CHECKING PERMISSION FOR LOCATION MANAGER TO ANDROID FOR SECURITY ISSUE
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
                 (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -105,150 +108,66 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //CREATING FIREBASE REFERENCE
         database = FirebaseDatabase.getInstance();
-       // myRef = FirebaseDatabase.getInstance().getReference();
-
         myRef = database.getReference("trucks/truck-1/");
+
+        //THIS TRIGGERS AS SOON AS A NEW CHILD IS ADDED
+        myRef.orderByKey().limitToLast(1).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.i("TAG/kl",""+dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         myRef.orderByKey().limitToLast(1).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-               // Log.i("TAG/lat","LATTT:"+dataSnapshot.child("latitude").getValue());
+                //GET THE LATEST LATLNG FROM FIREBASE
+               // if(truckLng != 0 && truckLat != 0){
 
+//                    truckLat = (long) dataSnapshot.child("latitude").getValue();
+//                    truckLng = (long) dataSnapshot.child("longitude").getValue();
                 truckLat = (long) dataSnapshot.child("latitude").getValue();
                 truckLng = (long) dataSnapshot.child("longitude").getValue();
 
-                setMap(truckLat, truckLng);
-                Log.i("TAG/lat","LATTT:"+truckLat);
+                    setMap(truckLat, truckLng);
 
+               // }
             }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            @Override public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s)      { }
+            @Override public void onChildRemoved(@NonNull DataSnapshot dataSnapshot)                          { }
+            @Override public void onChildMoved  (@NonNull DataSnapshot dataSnapshot, @Nullable String s)      { }
+            @Override public void onCancelled   (@NonNull DatabaseError databaseError)                        { }
         });
-/*
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.i("TAGGGG","LATTT:"+dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
-
-     /*  // query.
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-            //    String lat = dataSnapshot.child("latitude").getValue().toString();
-//                Log.i("TAGGGG","LATTT"+lat);
-                Log.i("TAGGGG","LATTT "+dataSnapshot);
-               // Log.i("TAGGGG","key  "+myRef.getKey());
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        *///CREATING UNIQUE REFERENCE FOR LAT AND LONG
-        // latRef = database.getReference("truck-1/latitude");
-        // longRef = database.getReference("truck-1/longitude");
-
-       // CREATE LISTENER FOR LATITUDE
-        /*latRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                latValue = dataSnapshot.getValue(double.class);
-                latTV.setText("Latitude: "+latValue);
-
-                newLat = latValue;
-                if(newLong != 0) {
-                    setMap();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        //CREATE LISTENER FOR LONGITUDE
-        longRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                longValue = dataSnapshot.getValue(double.class);
-                longTV.setText("Longitude: "+longValue);
-
-                newLong= longValue;
-                if(newLat != 0) {
-                    setMap();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
 
 
     }
 
-    public MarkerOptions a;
-    public Marker m1,m2;
-
     public void setMap(long lat1, long lng1) {
 
-       // Marker marker;
-
-     //   LatLng sydney = new LatLng(locat.getLatitude(), location.getLongitude());
-
         LatLng sydney = new LatLng (lat1, lng1);
-       // LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-         a = new MarkerOptions().position(new LatLng(lat1, lng1));
-         m1 = mMap.addMarker(a);
-
-       // countMarker = false;
-
-        //mMap.addMarker(new MarkerOptions().position(sydney));
+        a = new MarkerOptions().position(new LatLng(lat1, lng1));
+        m1 = mMap.addMarker(a);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-    //ZOOM THE CAMERA VIEW   22: we can see only one street
-                    //      18: we can see around 3 streets
-        //                  16: this is very clear but the visible area is too less
-        //                  15.5: we can see one locality and its neighbour  THIS IS GOOD FOR NOW!!
-        //                  12 : we can see whole aizawl city and its surroundings
+    /*                             ZOOM THE CAMERA VIEW
+    * *                          ---------------------------
+    * *                       22     : we can see only one street
+    * *                       18     : we can see around 3 streets
+    * *                       16     : this is very clear but the visible area is too less
+    * *                       15.5   : we can see one locality and its neighbour  THIS IS GOOD FOR NOW!!
+    * *                       12     : we can see whole aizawl city and its surroundings
+    */
+
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom
                 (new LatLng(lat1, lng1), 7.0f));
-
         mMap.clear();
-
         mMap.addMarker(new MarkerOptions().position(sydney));
 
         //GET LAST KNOWN LOCATION AND UPDATE THE FIREBASE
@@ -265,8 +184,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        LocationManager locationManager1 = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        Location location2 = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+        Location location2 = locationManager1.getLastKnownLocation(locationManager.GPS_PROVIDER);
 
         // Add a marker in Sydney and move the camera
         LatLng lastKnowLocation = new LatLng(location2.getLatitude(), location2.getLongitude());
@@ -296,9 +216,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(intent);
     }
 
-    public void lastKnownLocationClick(View view) {
+  /*  public void lastKnownLocationClick(View view) {
 
        // setMap();
 
-    }
+    }*/
 }

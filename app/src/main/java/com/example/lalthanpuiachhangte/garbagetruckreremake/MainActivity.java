@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         minuteSpinner = findViewById(R.id.minuteSpinner);
         secondSpinner = findViewById(R.id.secondSpinner);
 
-        liveButton = findViewById(R.id.liveButton);
+        //liveButton = findViewById(R.id.liveButton);
         ArrayAdapter<CharSequence> adapterSecond =
                 ArrayAdapter.createFromResource(this,R.array.second,android.R.layout.simple_dropdown_item_1line);
         ArrayAdapter<CharSequence> adapterMinute =
@@ -159,8 +159,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
 */
 
      listenForLocation();
@@ -182,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         return minute[userSelect] ;
     }
 
-    public void liveButtonClick(View view) {
+   /* public void liveButtonClick(View view) {
 
 
 //
@@ -203,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
 //            listenForLocation();
 //        }
     }
-
+*/
     private void listenForLocation() {
         //THIS LISTEN TO ANY CHANGEs IN THE GPS COORDINATES
         locationListener = new LocationListener() {
@@ -252,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void lastKnownLocationClick(View view) {
+/*    public void lastKnownLocationClick(View view) {
 
         //GET LAST KNOWN LOCATION AND UPDATE THE FIREBASE
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -271,6 +269,6 @@ public class MainActivity extends AppCompatActivity {
         latRef.setValue(location2.getLatitude());
         longRef.setValue(location2.getLongitude());
 
-    }
+    }*/
 }
 

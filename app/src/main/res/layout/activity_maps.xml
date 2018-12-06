@@ -21,12 +21,12 @@
         android:layout_height="wrap_content"
         android:onClick="GoToDrivePageClick"
         android:text="Go To Driver"/>
-
+<!--
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="lastKnownLocationClick"
-        android:text="Last Known Location"/>
+        android:text="Last Known Location"/>-->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
