@@ -36,7 +36,7 @@
         android:id="@+id/liveButton"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:text="null"
+        android:text="on"
         android:textSize="30sp"
         android:gravity="center"
         android:layout_gravity="center"

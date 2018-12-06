@@ -162,49 +162,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 */
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-//                latRef.setValue(location.getLatitude());
-//                longRef.setValue(location.getLongitude());
 
-                //PUSHING THE NEW LOCATION INTO FIREBASE WITH UNIQUE ID
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                String newKey = databaseReference.child("trucks/truck-1").push().getKey();
-
-                databaseReference.child("trucks/truck-1/" + newKey).child("latitude").setValue(location.getLatitude());
-                databaseReference.child("trucks/truck-1/" + newKey).child("longitude").setValue(location.getLongitude());
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, 5, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 5, locationListener);
+     listenForLocation();
 
     }
 
@@ -226,23 +185,23 @@ public class MainActivity extends AppCompatActivity {
     public void liveButtonClick(View view) {
 
 
-
-        minTime = second_user * 1000 + minute_user * 60 * 1000;
-
-        if (liveButtonStatus){
-            liveButton.setTextColor(R.color.colorGrey);
-            liveButtonStatus = false;
-            Toast.makeText(this,"false",Toast.LENGTH_SHORT).show();
-            liveButton.setText("Status: Off");
-            locationManager.removeUpdates(locationListener);
-        }
-        else{
-            liveButton.setTextColor(R.color.colorAccent);
-            liveButtonStatus = true;
-            Toast.makeText(this,"true",Toast.LENGTH_SHORT).show();
-            liveButton.setText("Status: On");
-            listenForLocation();
-        }
+//
+//        minTime = second_user * 1000 + minute_user * 60 * 1000;
+//
+//        if (liveButtonStatus){
+//            liveButton.setTextColor(R.color.colorGrey);
+//            liveButtonStatus = false;
+//            Toast.makeText(this,"false",Toast.LENGTH_SHORT).show();
+//            liveButton.setText("Status: Off");
+//            locationManager.removeUpdates(locationListener);
+//        }
+//        else{
+//            liveButton.setTextColor(R.color.colorAccent);
+//            liveButtonStatus = true;
+//            Toast.makeText(this,"true",Toast.LENGTH_SHORT).show();
+//            liveButton.setText("Status: On");
+//            listenForLocation();
+//        }
     }
 
     private void listenForLocation() {
@@ -289,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
        // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, 5, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 5, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, locationListener);
 
     }
 

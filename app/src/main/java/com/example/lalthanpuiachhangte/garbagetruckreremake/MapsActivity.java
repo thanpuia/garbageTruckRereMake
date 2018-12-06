@@ -61,6 +61,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public DatabaseReference latRef, longRef;
     public double newLat = 0;
     public double newLong = 0;
+    public long truckLat = 0;
+    public long truckLng = 0;
 
     public double latValue, longValue;
 
@@ -102,13 +104,64 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         longTV = findViewById(R.id.longitudeTextView);
 
         //CREATING FIREBASE REFERENCE
-        //database = FirebaseDatabase.getInstance();
-        myRef = FirebaseDatabase.getInstance().getReference();
-        final Query query = myRef.child("trucks/truck-1/").orderByKey().limitToLast(1);
-       // query.
+        database = FirebaseDatabase.getInstance();
+       // myRef = FirebaseDatabase.getInstance().getReference();
+
+        myRef = database.getReference("trucks/truck-1/");
+
+        myRef.orderByKey().limitToLast(1).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+               // Log.i("TAG/lat","LATTT:"+dataSnapshot.child("latitude").getValue());
+
+                truckLat = (long) dataSnapshot.child("latitude").getValue();
+                truckLng = (long) dataSnapshot.child("longitude").getValue();
+
+                setMap(truckLat, truckLng);
+                Log.i("TAG/lat","LATTT:"+truckLat);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+/*
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.i("TAGGGG","LATTT:"+dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
+
+
+     /*  // query.
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
             //    String lat = dataSnapshot.child("latitude").getValue().toString();
 //                Log.i("TAGGGG","LATTT"+lat);
                 Log.i("TAGGGG","LATTT "+dataSnapshot);
@@ -121,7 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-        //CREATING UNIQUE REFERENCE FOR LAT AND LONG
+        *///CREATING UNIQUE REFERENCE FOR LAT AND LONG
         // latRef = database.getReference("truck-1/latitude");
         // longRef = database.getReference("truck-1/longitude");
 
@@ -170,15 +223,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public MarkerOptions a;
     public Marker m1,m2;
 
-    public void setMap() {
+    public void setMap(long lat1, long lng1) {
 
        // Marker marker;
 
      //   LatLng sydney = new LatLng(locat.getLatitude(), location.getLongitude());
 
-        LatLng sydney = new LatLng (newLat, newLong);
+        LatLng sydney = new LatLng (lat1, lng1);
        // LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-         a = new MarkerOptions().position(new LatLng(newLat, newLong));
+         a = new MarkerOptions().position(new LatLng(lat1, lng1));
          m1 = mMap.addMarker(a);
 
        // countMarker = false;
@@ -192,7 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //                  15.5: we can see one locality and its neighbour  THIS IS GOOD FOR NOW!!
         //                  12 : we can see whole aizawl city and its surroundings
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom
-                (new LatLng(newLat, newLong), 7.0f));
+                (new LatLng(lat1, lng1), 7.0f));
 
         mMap.clear();
 
@@ -245,7 +298,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void lastKnownLocationClick(View view) {
 
-        setMap();
+       // setMap();
 
     }
 }
